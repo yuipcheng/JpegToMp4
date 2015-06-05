@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 namespace JpegToMp4
 {
     /// <summary>
-    /// reads jpeg and outputs mp4 and then deletes jpeg.
+    /// reads jpeg and outputs mp4 and then moves jpeg to a bkup folder.
     /// mp4 file is named by date.
     /// 
     /// assumes jpeg file names are in the following format:
-    ///     something_something_datetime_sequence.jpg
+    ///     C4D655370473(CAM_01)_1_20150603183804_3969.jpg
     /// 
     /// Usages:
     /// 1. no parameters
