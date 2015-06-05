@@ -1,0 +1,19 @@
+==============================================
+= FFmpeg git-01fcbdf shared LGPL v3 Download =
+==============================================
+   * Source: 
+<http://ffmpeg.zeranoe.com/custom_builds/bnbVwYJXcSeHjk37/ffmpeg-git-01fcbdf.7z>
+   * Win32: 
+<http://ffmpeg.zeranoe.com/custom_builds/bnbVwYJXcSeHjk37/ffmpeg-git-01fcbdf-win32-shared-lgpl.7z>
+   * Win64: 
+<http://ffmpeg.zeranoe.com/custom_builds/bnbVwYJXcSeHjk37/ffmpeg-git-01fcbdf-win64-shared-lgpl.7z>
+
+==============================================
+= FFmpeg git-71c3789 shared LGPL v3 Download =
+==============================================
+   Win32: 
+<http://ffmpeg.zeranoe.com/custom_builds/bnbVwYJXcSeHjk37/ffmpeg-20130821-git-71c3789-win32-shared-lgpl.7z>
+   Win64: 
+<http://ffmpeg.zeranoe.com/custom_builds/bnbVwYJXcSeHjk37/ffmpeg-20130821-git-71c3789-win64-shared-lgpl.7z>
+   Source: 
+<http://ffmpeg.zeranoe.com/custom_builds/bnbVwYJXcSeHjk37/ffmpeg-20130821-git-71c3789.7z>

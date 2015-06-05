@@ -1,0 +1,15 @@
+AForge.NET Framework
+http://www.aforgenet.com/framework
+==================================
+
+License agreement
+
+The AForge.Video.FFMPEG component is LGPL v3 licensed since
+it depends on the LGPL build of the FFMPEG library.
+
+The license can be found in the lgpl-3.0.txt files, or
+the next web pages:
+http://www.gnu.org/licenses/lgpl.html
+
+Copyright © AForge.NET, 2006-2013
+contacts@aforgenet.com
