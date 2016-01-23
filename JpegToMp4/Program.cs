@@ -161,20 +161,50 @@ namespace JpegToMp4
     ///     C4D655370473(CAM_01)_1_20150603183804_3969.jpg
     /// 
     /// Usages:
-    /// 1. no parameters
-    ///     reads jpeg in current folder and outputs mp4s in current folder
-    ///     
-    /// 2. 1 parameter - src
-    ///     reads jpeg in src folder and outputs mp4s in current folder
-    ///     
-    /// 3. 2 parameters - src, target
-    ///     reads jpeg in src folder and outputs mp4s in target folder
+    /// 3 parameters - src, target, backup
+    ///     reads jpeg in src folder and outputs mp4s in target folder,
+    ///     then jpeg are moved to backup folder.
     /// </summary>
     /// <remarks>
     /// To debug the executable, launch it with "debug" as an argument and then attach to debugger.
     /// </remarks>
     class Program
     {
+        #region props
+        private static string RootFullPath
+        {
+            get
+            {
+                var ret = Assembly.GetExecutingAssembly().Location;
+                return ret;
+            }
+        }
+
+        private static string RootFolder
+        {
+            get
+            {
+                var ret = new FileInfo(Program.RootFullPath).Directory.FullName;
+                return ret;
+            }
+        }
+
+        private static string LogFileName
+        {
+            get
+            {
+                var ret = new FileInfo(Path.Combine(RootFolder, DateTime.Today.ToString("yyyy-MM-dd") + ".log"));
+                return ret.FullName;
+            }
+        }
+
+        private static string JpegFolder = string.Empty;
+
+        private static string Mp4Folder = string.Empty;
+
+        private static string BackupFolder = string.Empty;
+        #endregion
+
         static void Main(string[] args)
         {
             if (args.ToList().IndexOf("debug") >= 0)
@@ -186,15 +216,70 @@ namespace JpegToMp4
                 Console.ReadLine();
             }
 
-            var pics = GetPictures(args);
-
-            if (pics.Keys.Count > 0)
+            if (args.Length < 3)
             {
-                JoinPicturesIntoMovie(pics);
+                Console.WriteLine("Usage: JpegToMp4.exe path-to-jpeg path-to-mp4 path-to-backup");
+            }
+            else
+            {
+                if (Program.ValidateArgs(args) == false)
+                {
+                    Console.WriteLine("Invalid path(s).");
+                }
+                else
+                {
+                    var pics = Program.GetPictures(args);
+
+                    if (pics.Keys.Count > 0)
+                    {
+                        var backupPath = args[2];
+                        Program.JoinPicturesIntoMovie(pics);
+                    }
+                }
             }
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
+        }
+
+        public static bool ValidateArgs(string[] args)
+        {
+            var ret = true;
+
+            if (args.Length >= 3)
+            {
+                var src = new DirectoryInfo(args[0]);
+                var target = new DirectoryInfo(args[1]);
+                var backup = new DirectoryInfo(args[2]);
+
+                ret = src.Exists && target.Exists && backup.Exists;
+
+                if (ret)
+                {
+                    Program.JpegFolder = src.FullName;
+                    Program.Mp4Folder = target.FullName;
+                    Program.BackupFolder = backup.FullName;
+                }
+            }
+
+            return ret;
+        }
+
+        public static void Log(string msg)
+        {
+            try
+            {
+                using (var file = File.AppendText(Program.LogFileName))
+                {
+                    var line = string.Format("{0}: {1}", DateTime.Now.ToLongTimeString(), msg);
+                    file.WriteLine(line);
+                    Console.WriteLine(line);
+                }
+            }
+            catch (Exception exc)
+            {
+                Console.Error.WriteLine("Failed to log error. Message: " + exc.Message + " StackTrace: " + exc.StackTrace);
+            }
         }
 
         /// <summary>
@@ -204,9 +289,9 @@ namespace JpegToMp4
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static Dictionary<string, List<FileInfo>> GetPictures(string[] args)
+        public static Dictionary<string, List<string>> GetPictures(string[] args)
         {
-            var ret = new Dictionary<string, List<FileInfo>>();
+            var ret = new Dictionary<string, List<string>>();
 
             try
             {
@@ -215,7 +300,7 @@ namespace JpegToMp4
 
                 if (args == null || args.Length == 0)
                 {
-                    src = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory;
+                    src = new FileInfo(Program.RootFullPath).Directory;
                     target = src;
                 }
                 else
@@ -238,23 +323,21 @@ namespace JpegToMp4
                     var key = new FileInfo(Path.Combine(target.FullName, videoFileName)).FullName;
 
                     if (ret.ContainsKey(key) == false)
-                        ret[key] = new List<FileInfo>();
+                        ret[key] = new List<string>();
 
-                    ret[key].Add(file);
+                    ret[key].Add(file.FullName);
                 }
             }
             catch (Exception exc)
             {
-                Console.WriteLine(exc.Message);
-                Console.WriteLine(exc.StackTrace);
+                Program.Log("Failed to get jpeg file paths with args: " + string.Join(", ", args) + " Error: " + exc.Message + " StackTrace: " + exc.StackTrace);
                 throw;
             }
 
             return ret;
         }
 
-
-        public static void JoinPicturesIntoMovie(Dictionary<string, List<FileInfo>> makeFile)
+        public static void JoinPicturesIntoMovie(Dictionary<string, List<string>> makeFile)
         {
             var rator = makeFile.GetEnumerator();
 
@@ -271,134 +354,181 @@ namespace JpegToMp4
                     #region extracts frames out of existing mp4
                     if (File.Exists(videoFile))
                     {// if there is a video already, read the frames out then write to the new file again.
-                        Console.WriteLine("Opening existing video file " + videoFile);
-
-                        var reader = new AForge.Video.FFMPEG.VideoFileReader();
-                        var isExistingMp4Damaged = false;
-
-                        try
+                        using (var reader = new AForge.Video.FFMPEG.VideoFileReader())
                         {
-                            reader.Open(videoFile);
-                        }
-                        catch (Exception exc)
-                        {// hack: may want to catch a more specific exception.
-                            isExistingMp4Damaged = true;
-                        }
+                            var isExistingMp4Damaged = false;
 
-                        if (isExistingMp4Damaged == false)
-                        {
-                            var tmp = reader.ReadVideoFrame();
-                            while (tmp != null)
+                            try
                             {
-                                framesOfExistingMp4.Add(tmp);
-                                tmp = reader.ReadVideoFrame();
+                                reader.Open(videoFile);
+                            }
+                            catch (Exception exc)
+                            {// hack: may want to catch a more specific exception.
+                                isExistingMp4Damaged = true;
                             }
 
-                            Console.WriteLine("Frames read: " + framesOfExistingMp4.Count().ToString());
+                            if (isExistingMp4Damaged == false)
+                            {
+                                var tmp = reader.ReadVideoFrame();
+                                while (tmp != null)
+                                {
+                                    framesOfExistingMp4.Add(tmp);
+                                    tmp = reader.ReadVideoFrame();
+                                }
+                            }
                         }
+
+                        Program.Log(string.Format("Read {0} frames from {1}.", framesOfExistingMp4.Count().ToString(), videoFile));
                     }
                     #endregion
 
                     using (writer = new AForge.Video.FFMPEG.VideoFileWriter())
                     {// dimension of first picture will be used for the dimension of the entire movie.
-                        var firstPicture = new Bitmap(pictureFiles[0].FullName);
+                        int width, height = 0;
+                        var videoFileIsReady = true;
 
-                        // creates the new mp4. this will overwrite the existing mp4.
-                        writer.Open(videoFile, firstPicture.Width, firstPicture.Height, 3, AForge.Video.FFMPEG.VideoCodec.MPEG4);
+                        Program.GetKeyFrameDimension(pictureFiles[0], out width, out height);
 
-                        #region writes extracted frames to mp4
-                        foreach (var bmp in framesOfExistingMp4)
+                        try
                         {
-                            writer.WriteVideoFrame(bmp);
-                            bmp.Dispose();
+                            writer.Open(videoFile, width, height, 3, AForge.Video.FFMPEG.VideoCodec.MPEG4);
+                        }
+                        catch (Exception exc)
+                        {
+                            videoFileIsReady = false;
                         }
 
-                        Console.WriteLine("Frames written: " + framesOfExistingMp4.Count().ToString());
-                        #endregion
-
-                        #region writes jpgs to mp4
-                        for (int i = 0; i < pictureFiles.Count; i++)
+                        if (videoFileIsReady)
                         {
-                            var fi = pictureFiles[i];
-
-                            if (fi.Length > 0)
+                            #region writes extracted frames to mp4
+                            if (framesOfExistingMp4.Count > 0)
                             {
-                                Bitmap bmp = null;
-                                var badPic = false;
-
-                                try
+                                var icnt = 0;
+                                foreach (var bmp in framesOfExistingMp4)
                                 {
-                                    bmp = new Bitmap(fi.FullName);
-                                }
-                                catch (Exception exc)
-                                {
-                                    badPic = true;
-                                    Console.WriteLine(string.Format("Bad image. Message: {0} StackTrace: {1}", exc.Message, exc.StackTrace));
-                                }
-
-                                if (badPic == false)
-                                {
-                                    AddText(ref bmp, fi.Name);
-                                    writer.WriteVideoFrame(bmp);
+                                    try
+                                    {
+                                        writer.WriteVideoFrame(bmp);
+                                        icnt += 1;
+                                    }
+                                    catch (Exception exc)
+                                    {
+                                        var msg = string.Format("ERROR! Failed to preserve 1 frame for {0}.", videoFile);
+                                        Program.Log(msg);
+                                    }
                                     bmp.Dispose();
+                                }
 
-                                    Console.WriteLine(fi.Name + " > " + new FileInfo(videoFile).Name + " remaining: " + (pictureFiles.Count - i).ToString());
+                                Program.Log(string.Format("Written {0} frames back to {1}", icnt.ToString(), videoFile));
+                            }
+                            #endregion
+
+                            #region writes jpgs to mp4
+                            for (int i = 0; i < pictureFiles.Count; i++)
+                            {
+                                var jpegFile = pictureFiles[i];
+
+                                if (jpegFile.Length > 0)
+                                {
+                                    Bitmap bmp = null;
+                                    var badPic = false;
+
+                                    try
+                                    {
+                                        bmp = new Bitmap(jpegFile);
+                                    }
+                                    catch (Exception exc)
+                                    {
+                                        badPic = true;
+                                        Program.Log(string.Format("ERROR! Skipped bad image {0}. Message: {1} StackTrace: {2}", jpegFile, exc.Message, exc.StackTrace));
+                                    }
+
+                                    if (badPic == false)
+                                    {
+                                        var fi = new FileInfo(jpegFile);
+
+                                        AddText(ref bmp, fi.Name);
+                                        try
+                                        {
+                                            writer.WriteVideoFrame(bmp);
+                                            Program.Log(jpegFile + " > " + videoFile + " > OK");
+                                        }
+                                        catch (Exception exc)
+                                        {
+                                            Program.Log("ERROR! " + jpegFile + " > " + videoFile + " > FAILED. Message: " + exc.Message + " StackTrace: " + exc.StackTrace);
+                                        }
+                                        finally
+                                        {
+                                            bmp.Dispose();
+                                        }
+                                    }
+
+                                    Program.Backup(jpegFile);
                                 }
                             }
+                            #endregion}
                         }
-                        #endregion
                     }
                 }
+            }
+        }
 
-                Backup(videoFile, pictureFiles);
+        public static void GetKeyFrameDimension(string jpegFile, out int width, out int height)
+        {
+            width = 0;
+            height = 0;
+
+            Bitmap bmp = null;
+            try
+            {
+                bmp = new Bitmap(jpegFile);
+                width = bmp.Width;
+                height = bmp.Height;
+            }
+            finally
+            {
+                if (bmp != null)
+                {
+                    bmp.Dispose();
+                }
             }
         }
 
         public static void AddText(ref Bitmap bmp, string text)
         {
-            using (var g = Graphics.FromImage(bmp))
+            try
             {
-                var rectf = new RectangleF(0, 0, bmp.Width / 2, 20);
-                g.FillRectangle(Brushes.White, rectf.X, rectf.Y, rectf.Width, rectf.Height);
-                g.SmoothingMode = SmoothingMode.AntiAlias;
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
-                g.DrawString(text, new Font("Tahoma", 8), Brushes.Black, rectf.X + 5, rectf.Y + (float)2.5);
-                g.Flush();
+                using (var g = Graphics.FromImage(bmp))
+                {
+                    var rectf = new RectangleF(0, 0, bmp.Width / 2, 20);
+                    g.FillRectangle(Brushes.White, rectf.X, rectf.Y, rectf.Width, rectf.Height);
+                    g.SmoothingMode = SmoothingMode.AntiAlias;
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
+                    g.DrawString(text, new Font("Tahoma", 8), Brushes.Black, rectf.X + 5, rectf.Y + (float)2.5);
+                    g.Flush();
+                }
+            }
+            catch (Exception exc)
+            {
+                Program.Log("ERROR! Failed to write text to video. Text: " + text);
             }
         }
 
-        public static void Backup(string logPath, List<FileInfo> files)
+        public static void Backup(string file)
         {
-            foreach (var file in files)
+            try
             {
-                var bkupFolder = new DirectoryInfo(Path.Combine(file.Directory.FullName, "bkup"));
+                var moveTo = Path.Combine(Program.BackupFolder, new FileInfo(file).Name);
+                File.Move(file, moveTo);
+            }
+            catch (Exception exc)
+            {
+                var evil = FileUtil.WhoIsLocking(file);
+                var txt = string.Format("ERROR! Failed to move {0} to {1} because file is used by {2}.", file, Program.BackupFolder, string.Join(", ", evil.ToList()));
 
-                if (bkupFolder.Exists == false)
-                    bkupFolder.Create();
-
-                var bkup = new FileInfo(Path.Combine(bkupFolder.FullName, file.Name)).FullName;
-
-                try
-                {
-                    file.MoveTo(bkup);
-                }
-                catch (Exception exc)
-                {
-                    var evil = FileUtil.WhoIsLocking(file.FullName);
-                    var log = new FileInfo(logPath + ".log");
-                    var txt = "Failed " + file.FullName + " => " + bkup + " locked by " + string.Join(", ", evil.ToList());
-
-                    if (log.Exists == false)
-                        log.Create().Close();
-
-                    using (var sr = log.AppendText())
-                    {
-                        sr.Write(txt);
-                        sr.WriteLine();
-                    }
-                }
+                Program.Log(txt);
             }
         }
     }
