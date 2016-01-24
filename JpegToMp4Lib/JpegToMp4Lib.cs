@@ -343,10 +343,9 @@ namespace JpegToMp4Lib
 
                     using (writer = new VideoFileWriter())
                     {// dimension of first picture will be used for the dimension of the entire movie.
-                        int width, height = 0;
+                        var width = Convert.ToInt32(ConfigurationManager.AppSettings["JpegToMp4Lib_Width"]);
+                        var height = Convert.ToInt32(ConfigurationManager.AppSettings["JpegToMp4Lib_Height"]);
                         var videoFileIsReady = true;
-
-                        this.GetKeyFrameDimension(pictureFiles[0], out width, out height);
 
                         try
                         {
@@ -430,28 +429,6 @@ namespace JpegToMp4Lib
                             #endregion}
                         }
                     }
-                }
-            }
-        }
-
-        public void GetKeyFrameDimension(string jpegFile, out int width, out int height)
-        {
-            width = 0;
-            height = 0;
-
-            Bitmap bmp = null;
-
-            try
-            {
-                bmp = new Bitmap(jpegFile);
-                width = bmp.Width;
-                height = bmp.Height;
-            }
-            finally
-            {
-                if (bmp != null)
-                {
-                    bmp.Dispose();
                 }
             }
         }
