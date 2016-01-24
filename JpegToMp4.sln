@@ -6,11 +6,10 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JpegToMp4", "JpegToMp4\JpegToMp4.csproj", "{B8ADC672-852E-4305-8A7C-0B7C1B564939}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFiles", "SolutionFiles", "{03A3A0BB-1CF1-4D1E-AEBF-F45CDFD58262}"
-	ProjectSection(SolutionItems) = preProject
-		SolutionFiles\ffmpeg-20150530-git-2e15f07-win64-dev.7z = SolutionFiles\ffmpeg-20150530-git-2e15f07-win64-dev.7z
-		SolutionFiles\ffmpeg-20150530-git-2e15f07-win64-shared.7z = SolutionFiles\ffmpeg-20150530-git-2e15f07-win64-shared.7z
-		SolutionFiles\ffmpeg-20150530-git-2e15f07-win64-static.7z = SolutionFiles\ffmpeg-20150530-git-2e15f07-win64-static.7z
-	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JpegToMp4Service", "JpegToMp4Service\JpegToMp4Service.csproj", "{0FAD966E-03D5-425E-BBFE-76CE0F247577}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JpegToMp4Lib", "JpegToMp4Lib\JpegToMp4Lib.csproj", "{EE320CE1-E4D1-49BB-981F-5A855538614E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +33,30 @@ Global
 		{B8ADC672-852E-4305-8A7C-0B7C1B564939}.Release|x64.Build.0 = Release|x64
 		{B8ADC672-852E-4305-8A7C-0B7C1B564939}.Release|x86.ActiveCfg = Release|x86
 		{B8ADC672-852E-4305-8A7C-0B7C1B564939}.Release|x86.Build.0 = Release|x86
+		{0FAD966E-03D5-425E-BBFE-76CE0F247577}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FAD966E-03D5-425E-BBFE-76CE0F247577}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FAD966E-03D5-425E-BBFE-76CE0F247577}.Debug|x64.ActiveCfg = Debug|x64
+		{0FAD966E-03D5-425E-BBFE-76CE0F247577}.Debug|x64.Build.0 = Debug|x64
+		{0FAD966E-03D5-425E-BBFE-76CE0F247577}.Debug|x86.ActiveCfg = Debug|x86
+		{0FAD966E-03D5-425E-BBFE-76CE0F247577}.Debug|x86.Build.0 = Debug|x86
+		{0FAD966E-03D5-425E-BBFE-76CE0F247577}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FAD966E-03D5-425E-BBFE-76CE0F247577}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FAD966E-03D5-425E-BBFE-76CE0F247577}.Release|x64.ActiveCfg = Release|x64
+		{0FAD966E-03D5-425E-BBFE-76CE0F247577}.Release|x64.Build.0 = Release|x64
+		{0FAD966E-03D5-425E-BBFE-76CE0F247577}.Release|x86.ActiveCfg = Release|x86
+		{0FAD966E-03D5-425E-BBFE-76CE0F247577}.Release|x86.Build.0 = Release|x86
+		{EE320CE1-E4D1-49BB-981F-5A855538614E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE320CE1-E4D1-49BB-981F-5A855538614E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE320CE1-E4D1-49BB-981F-5A855538614E}.Debug|x64.ActiveCfg = Debug|x64
+		{EE320CE1-E4D1-49BB-981F-5A855538614E}.Debug|x64.Build.0 = Debug|x64
+		{EE320CE1-E4D1-49BB-981F-5A855538614E}.Debug|x86.ActiveCfg = Debug|x86
+		{EE320CE1-E4D1-49BB-981F-5A855538614E}.Debug|x86.Build.0 = Debug|x86
+		{EE320CE1-E4D1-49BB-981F-5A855538614E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE320CE1-E4D1-49BB-981F-5A855538614E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE320CE1-E4D1-49BB-981F-5A855538614E}.Release|x64.ActiveCfg = Release|x64
+		{EE320CE1-E4D1-49BB-981F-5A855538614E}.Release|x64.Build.0 = Release|x64
+		{EE320CE1-E4D1-49BB-981F-5A855538614E}.Release|x86.ActiveCfg = Release|x86
+		{EE320CE1-E4D1-49BB-981F-5A855538614E}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
