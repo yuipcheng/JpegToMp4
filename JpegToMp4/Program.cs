@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -41,14 +42,27 @@ namespace JpegToMp4
                 Console.ReadLine();
             }
 
+            var jpeg = ConfigurationManager.AppSettings["JpegToMp4Lib_Jpeg"];
+            var watcher = new FileSystemWatcher(jpeg, "*.jpg");
+            watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+           | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+
+
+            watcher.Created += new FileSystemEventHandler(Watcher_Created);
+            watcher.EnableRaisingEvents = true;
+
+            Console.WriteLine("Press 'q' to quit monitoring " + jpeg);
+            while (Console.Read() != 'q')
+            {
+            }
+            Console.WriteLine("Stopped monitoring " + jpeg);
+        }
+
+        private static void Watcher_Created(object sender, FileSystemEventArgs e)
+        {
             var jpegToMp4 = new JpegToMp4Lib.JpegToMp4Lib();
 
             jpegToMp4.Start();
-
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
         }
-
-
     }
 }
