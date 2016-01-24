@@ -31,6 +31,15 @@ namespace JpegToMp4
     /// </remarks>
     class Program
     {
+        private static string JpegPath
+        {
+            get
+            {
+                var ret = ConfigurationManager.AppSettings["JpegToMp4Lib_Jpeg"];
+                return ret;
+            }
+        }
+
         static void Main(string[] args)
         {
             if (args.ToList().IndexOf("debug") >= 0)
@@ -42,27 +51,33 @@ namespace JpegToMp4
                 Console.ReadLine();
             }
 
-            var jpeg = ConfigurationManager.AppSettings["JpegToMp4Lib_Jpeg"];
-            var watcher = new FileSystemWatcher(jpeg, "*.jpg");
-            watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
-           | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            if (Directory.GetFiles(Program.JpegPath, "*.jpg", SearchOption.TopDirectoryOnly).Length > 0)
+            {
+                Program.ComposeJpegToMp4();
+            }
 
+            var watcher = new FileSystemWatcher(Program.JpegPath, "*.jpg");
 
             watcher.Created += new FileSystemEventHandler(Watcher_Created);
             watcher.EnableRaisingEvents = true;
 
-            Console.WriteLine("Press 'q' to quit monitoring " + jpeg);
-            while (Console.Read() != 'q')
+            Console.Write("Monitoring " + Program.JpegPath + ". Press 'Esc' to quit.");
+            while (Console.ReadKey(true).Key != ConsoleKey.Escape)
             {
             }
-            Console.WriteLine("Stopped monitoring " + jpeg);
+            Console.WriteLine("Stopped monitoring " + Program.JpegPath);
         }
 
         private static void Watcher_Created(object sender, FileSystemEventArgs e)
         {
-            var jpegToMp4 = new JpegToMp4Lib.JpegToMp4Lib();
+            Program.ComposeJpegToMp4();
+        }
 
+        private static void ComposeJpegToMp4()
+        {
+            var jpegToMp4 = new JpegToMp4Lib.JpegToMp4Lib();
             jpegToMp4.Start();
+            Console.Write("Monitoring " + Program.JpegPath + ". Press 'Esc' to quit.");
         }
     }
 }

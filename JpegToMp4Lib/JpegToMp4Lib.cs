@@ -209,7 +209,7 @@ namespace JpegToMp4Lib
         {
             get
             {
-                var ret = new FileInfo(Path.Combine(this.RootPath, DateTime.Today.ToString("yyyy-MM-dd") + ".log"));
+                var ret = new FileInfo(Path.Combine(this.RootPath, "Log", DateTime.Today.ToString("yyyy-MM-dd") + ".log"));
                 return ret.FullName;
             }
         }
@@ -244,6 +244,13 @@ namespace JpegToMp4Lib
         {
             try
             {
+                var logDir = new FileInfo(this.LogFilename).Directory.FullName;
+
+                if (Directory.Exists(logDir) == false)
+                {
+                    Directory.CreateDirectory(logDir);
+                }
+
                 using (var file = File.AppendText(this.LogFilename))
                 {
                     var line = string.Format("{0}: {1}", DateTime.Now.ToLongTimeString(), msg);
@@ -321,6 +328,7 @@ namespace JpegToMp4Lib
                             if (isExistingMp4Damaged == false)
                             {
                                 var tmp = reader.ReadVideoFrame();
+
                                 while (tmp != null)
                                 {
                                     framesOfExistingMp4.Add(tmp);
@@ -367,6 +375,7 @@ namespace JpegToMp4Lib
                                         var msg = string.Format("ERROR! Failed to preserve 1 frame for {0}.", videoFile);
                                         this.Log(msg);
                                     }
+
                                     bmp.Dispose();
                                 }
 
@@ -399,6 +408,7 @@ namespace JpegToMp4Lib
                                         var fi = new FileInfo(jpegFile);
 
                                         AddText(ref bmp, fi.Name);
+
                                         try
                                         {
                                             writer.WriteVideoFrame(bmp);
@@ -430,6 +440,7 @@ namespace JpegToMp4Lib
             height = 0;
 
             Bitmap bmp = null;
+
             try
             {
                 bmp = new Bitmap(jpegFile);
@@ -472,12 +483,21 @@ namespace JpegToMp4Lib
             try
             {
                 var moveTo = Path.Combine(this.BackupPath, new FileInfo(file).Name);
-                File.Move(file, moveTo);
+
+                if (File.Exists(moveTo) == false)
+                {
+                    File.Move(file, moveTo);
+                }
+                else
+                {
+                    moveTo = Path.Combine(this.BackupPath, new FileInfo(file).Name + "." + Guid.NewGuid().ToString() + ".jpg");
+                    File.Move(file, moveTo);
+                }
             }
             catch (Exception exc)
             {
                 var evil = FileUtil.WhoIsLocking(file);
-                var txt = string.Format("ERROR! Failed to move {0} to {1} because file is used by {2}.", file, this.BackupPath, string.Join(", ", evil.ToList()));
+                var txt = string.Format("ERROR! Failed to backup {0} to {1} because file is used by {2}. Message: {3} StackTrace: {4}", file, this.BackupPath, string.Join(", ", evil.ToList()), exc.Message, exc.StackTrace);
 
                 this.Log(txt);
             }
