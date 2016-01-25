@@ -284,7 +284,7 @@ namespace JpegToMp4Lib
                 // eg C4D655370473(CAM_01)_1_20150603183804_3969.jpg
                 var tokens = file.Name.Split("_".ToCharArray());
                 var videoFileName = tokens[0] + "_" + tokens[1] + "_" + tokens[2] + "_" + tokens[3].Substring(0, 8).Insert(4, "-").Insert(7, "-") + ".mp4";
-                var key = new FileInfo(Path.Combine(mp4.FullName, videoFileName)).FullName;
+                var key = Path.Combine(mp4.FullName, videoFileName);
 
                 if (ret.ContainsKey(key) == false)
                     ret[key] = new List<string>();
