@@ -459,7 +459,13 @@ namespace JpegToMp4Lib
         {
             try
             {
-                var moveTo = Path.Combine(this.BackupPath, new FileInfo(file).Name);
+                var dateFolder = new FileInfo(file).Name.Split("_".ToCharArray())[3].Substring(0, 8).Insert(4, "-").Insert(7, "-");
+                var moveTo = Path.Combine(this.BackupPath, dateFolder, new FileInfo(file).Name);
+
+                if (Directory.Exists(Path.Combine(this.BackupPath, dateFolder)) == false)
+                {// creates a date folder to put all jpegs in there.
+                    Directory.CreateDirectory(Path.Combine(this.BackupPath, dateFolder));
+                }
 
                 if (File.Exists(moveTo) == false)
                 {
