@@ -313,18 +313,20 @@ namespace JpegToMp4Lib
         public string MoveToQueue(string jpeg)
         {
             var ret = string.Empty;
-            var fi = new FileInfo(jpeg);
 
-            if (fi.Exists)
+            try
             {
-                try
+                if (File.Exists(jpeg))
                 {
+                    var fi = new FileInfo(jpeg);
+
                     ret = Path.Combine(this.QueuePath, fi.Name);
                     fi.MoveTo(ret);
+
                     this.Log(jpeg + " > " + ret + " > QUEUED");
                 }
-                catch { }
             }
+            catch { }
 
             return ret;
         }
