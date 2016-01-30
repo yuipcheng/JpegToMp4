@@ -10,151 +10,11 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JpegToMp4Lib
 {
-    /// <summary>
-    /// ref: http://stackoverflow.com/a/20623311/310767
-    /// </summary>
-    static public class FileUtil
-    {
-        [StructLayout(LayoutKind.Sequential)]
-        struct RM_UNIQUE_PROCESS
-        {
-            public int dwProcessId;
-            public System.Runtime.InteropServices.ComTypes.FILETIME ProcessStartTime;
-        }
-
-        const int RmRebootReasonNone = 0;
-        const int CCH_RM_MAX_APP_NAME = 255;
-        const int CCH_RM_MAX_SVC_NAME = 63;
-
-        enum RM_APP_TYPE
-        {
-            RmUnknownApp = 0,
-            RmMainWindow = 1,
-            RmOtherWindow = 2,
-            RmService = 3,
-            RmExplorer = 4,
-            RmConsole = 5,
-            RmCritical = 1000
-        }
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        struct RM_PROCESS_INFO
-        {
-            public RM_UNIQUE_PROCESS Process;
-
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCH_RM_MAX_APP_NAME + 1)]
-            public string strAppName;
-
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCH_RM_MAX_SVC_NAME + 1)]
-            public string strServiceShortName;
-
-            public RM_APP_TYPE ApplicationType;
-            public uint AppStatus;
-            public uint TSSessionId;
-            [MarshalAs(UnmanagedType.Bool)]
-            public bool bRestartable;
-        }
-
-        [DllImport("rstrtmgr.dll", CharSet = CharSet.Unicode)]
-        static extern int RmRegisterResources(uint pSessionHandle,
-                                              UInt32 nFiles,
-                                              string[] rgsFilenames,
-                                              UInt32 nApplications,
-                                              [In] RM_UNIQUE_PROCESS[] rgApplications,
-                                              UInt32 nServices,
-                                              string[] rgsServiceNames);
-
-        [DllImport("rstrtmgr.dll", CharSet = CharSet.Auto)]
-        static extern int RmStartSession(out uint pSessionHandle, int dwSessionFlags, string strSessionKey);
-
-        [DllImport("rstrtmgr.dll")]
-        static extern int RmEndSession(uint pSessionHandle);
-
-        [DllImport("rstrtmgr.dll")]
-        static extern int RmGetList(uint dwSessionHandle,
-                                    out uint pnProcInfoNeeded,
-                                    ref uint pnProcInfo,
-                                    [In, Out] RM_PROCESS_INFO[] rgAffectedApps,
-                                    ref uint lpdwRebootReasons);
-
-        /// <summary>
-        /// Find out what process(es) have a lock on the specified file.
-        /// </summary>
-        /// <param name="path">Path of the file.</param>
-        /// <returns>Processes locking the file</returns>
-        /// <remarks>See also:
-        /// http://msdn.microsoft.com/en-us/library/windows/desktop/aa373661(v=vs.85).aspx
-        /// http://wyupdate.googlecode.com/svn-history/r401/trunk/frmFilesInUse.cs (no copyright in code at time of viewing)
-        /// 
-        /// </remarks>
-        static public List<Process> WhoIsLocking(string path)
-        {
-            uint handle;
-            string key = Guid.NewGuid().ToString();
-            List<Process> processes = new List<Process>();
-
-            int res = RmStartSession(out handle, 0, key);
-            if (res != 0) throw new Exception("Could not begin restart session.  Unable to determine file locker.");
-
-            try
-            {
-                const int ERROR_MORE_DATA = 234;
-                uint pnProcInfoNeeded = 0,
-                     pnProcInfo = 0,
-                     lpdwRebootReasons = RmRebootReasonNone;
-
-                string[] resources = new string[] { path }; // Just checking on one resource.
-
-                res = RmRegisterResources(handle, (uint)resources.Length, resources, 0, null, 0, null);
-
-                if (res != 0) throw new Exception("Could not register resource.");
-
-                //Note: there's a race condition here -- the first call to RmGetList() returns
-                //      the total number of process. However, when we call RmGetList() again to get
-                //      the actual processes this number may have increased.
-                res = RmGetList(handle, out pnProcInfoNeeded, ref pnProcInfo, null, ref lpdwRebootReasons);
-
-                if (res == ERROR_MORE_DATA)
-                {
-                    // Create an array to store the process results
-                    RM_PROCESS_INFO[] processInfo = new RM_PROCESS_INFO[pnProcInfoNeeded];
-                    pnProcInfo = pnProcInfoNeeded;
-
-                    // Get the list
-                    res = RmGetList(handle, out pnProcInfoNeeded, ref pnProcInfo, processInfo, ref lpdwRebootReasons);
-                    if (res == 0)
-                    {
-                        processes = new List<Process>((int)pnProcInfo);
-
-                        // Enumerate all of the results and add them to the 
-                        // list to be returned
-                        for (int i = 0; i < pnProcInfo; i++)
-                        {
-                            try
-                            {
-                                processes.Add(Process.GetProcessById(processInfo[i].Process.dwProcessId));
-                            }
-                            // catch the error -- in case the process is no longer running
-                            catch (ArgumentException) { }
-                        }
-                    }
-                    else throw new Exception("Could not list processes locking resource.");
-                }
-                else if (res != 0) throw new Exception("Could not list processes locking resource. Failed to get size of result.");
-            }
-            finally
-            {
-                RmEndSession(handle);
-            }
-
-            return processes;
-        }
-    }
-
     public class JpegToMp4Lib
     {
         public JpegToMp4Lib() { }
@@ -165,6 +25,15 @@ namespace JpegToMp4Lib
             get
             {
                 var ret = new DirectoryInfo(ConfigurationManager.AppSettings["JpegToMp4Lib_Jpeg"]);
+                return ret.FullName;
+            }
+        }
+
+        private string QueuePath
+        {
+            get
+            {
+                var ret = new DirectoryInfo(ConfigurationManager.AppSettings["JpegToMp4Lib_Queue"]);
                 return ret.FullName;
             }
         }
@@ -231,6 +100,7 @@ namespace JpegToMp4Lib
                 }
             }
         }
+
         public bool ValidateArgs()
         {
             var ret = false;
@@ -277,7 +147,7 @@ namespace JpegToMp4Lib
 
             var jpeg = new DirectoryInfo(this.JpegPath);
             var mp4 = new DirectoryInfo(this.Mp4Path);
-            var files = jpeg.GetFiles("*.jpg").OrderBy(o => o.FullName).ToList();
+            var files = jpeg.GetFiles("*.jpg", SearchOption.AllDirectories).OrderBy(o => o.FullName).ToList();
 
             foreach (var file in files)
             {
@@ -386,36 +256,43 @@ namespace JpegToMp4Lib
                             for (int i = 0; i < pictureFiles.Count; i++)
                             {
                                 var jpegFile = pictureFiles[i];
+                                var jpegQueue = string.Empty;
 
                                 if (jpegFile.Length > 0)
                                 {
                                     Bitmap bmp = null;
                                     var badPic = false;
 
+                                    do
+                                    {
+                                        jpegQueue = MoveToQueue(jpegFile);
+                                        Thread.Sleep(100);
+                                    } while (string.IsNullOrEmpty(jpegQueue) == true);
+
                                     try
                                     {
-                                        bmp = new Bitmap(jpegFile);
+                                        bmp = new Bitmap(jpegQueue);
                                     }
                                     catch (Exception exc)
                                     {
                                         badPic = true;
-                                        this.Log(string.Format("ERROR! Skipped bad image {0}. Message: {1} StackTrace: {2}", jpegFile, exc.Message, exc.StackTrace));
+                                        this.Log(string.Format("ERROR! Skipped bad image {0}. Message: {1} StackTrace: {2}", jpegQueue, exc.Message, exc.StackTrace));
                                     }
 
                                     if (badPic == false)
                                     {
-                                        var fi = new FileInfo(jpegFile);
+                                        var fi = new FileInfo(jpegQueue);
 
                                         AddText(ref bmp, fi.Name);
 
                                         try
                                         {
                                             writer.WriteVideoFrame(bmp);
-                                            this.Log(jpegFile + " > " + videoFile + " > OK");
+                                            this.Log(jpegQueue + " > " + videoFile + " > COMPOSED");
                                         }
                                         catch (Exception exc)
                                         {
-                                            this.Log("ERROR! " + jpegFile + " > " + videoFile + " > FAILED. Message: " + exc.Message + " StackTrace: " + exc.StackTrace);
+                                            this.Log("ERROR! " + jpegQueue + " > " + videoFile + " > FAILED. Message: " + exc.Message + " StackTrace: " + exc.StackTrace);
                                         }
                                         finally
                                         {
@@ -423,7 +300,7 @@ namespace JpegToMp4Lib
                                         }
                                     }
 
-                                    this.Backup(jpegFile);
+                                    this.Backup(jpegQueue);
                                 }
                             }
                             #endregion}
@@ -431,6 +308,25 @@ namespace JpegToMp4Lib
                     }
                 }
             }
+        }
+
+        public string MoveToQueue(string jpeg)
+        {
+            var ret = string.Empty;
+            var fi = new FileInfo(jpeg);
+
+            if (fi.Exists)
+            {
+                try
+                {
+                    ret = Path.Combine(this.QueuePath, fi.Name);
+                    fi.MoveTo(ret);
+                    this.Log(jpeg + " > " + ret + " > QUEUED");
+                }
+                catch { }
+            }
+
+            return ret;
         }
 
         public void AddText(ref Bitmap bmp, string text)
@@ -457,32 +353,29 @@ namespace JpegToMp4Lib
 
         public void Backup(string file)
         {
+            var dateFolder = new FileInfo(file).Name.Split("_".ToCharArray())[3].Substring(0, 8).Insert(4, "-").Insert(7, "-");
+            var moveTo = Path.Combine(this.BackupPath, dateFolder, new FileInfo(file).Name);
+
+            if (Directory.Exists(Path.Combine(this.BackupPath, dateFolder)) == false)
+            {// creates a date folder to put all jpegs in there.
+                Directory.CreateDirectory(Path.Combine(this.BackupPath, dateFolder));
+            }
+
             try
             {
-                var dateFolder = new FileInfo(file).Name.Split("_".ToCharArray())[3].Substring(0, 8).Insert(4, "-").Insert(7, "-");
-                var moveTo = Path.Combine(this.BackupPath, dateFolder, new FileInfo(file).Name);
+                File.Move(file, moveTo);
 
-                if (Directory.Exists(Path.Combine(this.BackupPath, dateFolder)) == false)
-                {// creates a date folder to put all jpegs in there.
-                    Directory.CreateDirectory(Path.Combine(this.BackupPath, dateFolder));
-                }
-
-                if (File.Exists(moveTo) == false)
-                {
-                    File.Move(file, moveTo);
-                }
-                else
-                {
-                    moveTo = Path.Combine(this.BackupPath, new FileInfo(file).Name + "." + Guid.NewGuid().ToString() + ".jpg");
-                    File.Move(file, moveTo);
-                }
+                this.Log(file + " > " + moveTo + " > BACKED UP");
             }
-            catch (Exception exc)
+            catch (IOException exc)
             {
-                var evil = FileUtil.WhoIsLocking(file);
-                var txt = string.Format("ERROR! Failed to backup {0} to {1} because file is used by {2}. Message: {3} StackTrace: {4}", file, this.BackupPath, string.Join(", ", evil.ToList()), exc.Message, exc.StackTrace);
+                if (exc.Message.Trim() == "Cannot create a file when that file already exists.")
+                {
+                    File.Delete(moveTo);
+                    File.Move(file, moveTo);
 
-                this.Log(txt);
+                    this.Log(file + " > " + moveTo + " > BACKED UP");
+                }
             }
         }
     }

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JpegToMp4
@@ -51,7 +52,7 @@ namespace JpegToMp4
                 Console.ReadLine();
             }
 
-            if (Directory.GetFiles(Program.JpegPath, "*.jpg", SearchOption.TopDirectoryOnly).Length > 0)
+            if (Directory.GetFiles(Program.JpegPath, "*.jpg", SearchOption.AllDirectories).Length > 0)
             {
                 Program.ComposeJpegToMp4();
             }

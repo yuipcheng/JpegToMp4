@@ -127,6 +127,104 @@
       <Name>JpegToMp4Lib</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="cam1\cam1_bkup\" />
+    <Folder Include="cam1\cam1_mp4\" />
+    <Folder Include="cam1\cam1_queue\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104828_5881.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104830_5882.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104838_5883.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104839_5884.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104840_5885.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104851_5886.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104900_5887.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104901_5888.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104903_5889.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104904_5890.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104906_5891.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104907_5892.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104908_5893.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104910_5894.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104911_5895.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104913_5896.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104914_5897.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104916_5898.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104917_5899.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104919_5900.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104920_5901.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104922_5902.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150711104923_5903.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151722_20996.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151724_20997.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151725_20998.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151726_20999.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151728_21000.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151729_21001.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151731_21002.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151732_21003.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151733_21004.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151734_21005.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151736_21006.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151737_21007.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151739_21008.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151741_21009.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151742_21010.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151743_21011.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151744_21012.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151745_21013.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151747_21014.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151750_21015.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151752_21016.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151754_21017.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151755_21018.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151756_21019.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731151758_21020.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152720_21021.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152721_21022.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152722_21023.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152723_21024.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152724_21025.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152726_21026.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152727_21027.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152729_21028.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152730_21029.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152731_21030.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152732_21031.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152734_21032.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152735_21033.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152736_21034.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152738_21035.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152739_21036.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152740_21037.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152741_21038.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152742_21039.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152744_21040.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152745_21041.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150731152746_21042.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061903_2410.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061912_2411.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061913_2412.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061914_2413.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061915_2414.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061917_2415.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061918_2416.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061919_2417.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061920_2418.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061922_2419.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061923_2420.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061924_2421.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061926_2422.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061927_2423.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061929_2424.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061930_2425.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061931_2426.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061933_2427.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061934_2428.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061935_2429.jpg" />
+    <Content Include="cam1\cam1\C4D655370473%28CAM_01%29_1_20150821061936_2430.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
